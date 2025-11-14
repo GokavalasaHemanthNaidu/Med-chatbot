@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# MedBot Enhanced - Quick Run Script
+
+set -e
+
+echo "🤖 MedBot Enhanced - Quick Run"
+echo "==============================="
+echo ""
+echo "Select option to run:"
+echo "1) Desktop GUI (Tkinter)"
+echo "2) Flask API Server"
+echo "3) Docker Compose (Full Stack)"
+echo "4) Exit"
+echo ""
+
+read -p "Enter your choice (1-4): " choice
+
+case $choice in
+    1)
+        echo "Starting Desktop GUI..."
+        source venv/bin/activate
+        python gui.py
+        ;;
+    2)
+        echo "Starting Flask API Server..."
+        source venv/bin/activate
+        export FLASK_ENV=development
+        export FLASK_APP=wsgi.py
+        python -m flask run --debug
+        ;;
+    3)
+        echo "Starting Docker Compose Stack..."
+        if ! command -v docker-compose &> /dev/null; then
+            echo "Docker Compose not found. Please install Docker Desktop."
+            exit 1
+        fi
+        docker-compose up -d
+        echo ""
+        echo "Services running:"
+        echo "- Frontend: http://localhost:3000"
+        echo "- Backend API: http://localhost:5000"
+        echo "- Prometheus: http://localhost:9090"
+        echo "- Grafana: http://localhost:3001"
+        ;;
+    4)
+        echo "Exiting..."
+        exit 0
+        ;;
+    *)
+        echo "Invalid choice. Exiting..."
+        exit 1
+        ;;
+esac

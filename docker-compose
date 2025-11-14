@@ -1,0 +1,151 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: medbot-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-medbot}
+      POSTGRES_USER: ${POSTGRES_USER:-medbot_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schemas/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medbot_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - medbot-network
+
+  # Redis Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    container_name: medbot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - medbot-network
+
+  # Backend Flask API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medbot-backend
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-medbot_user}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-medbot}
+      - REDIS_URL=redis://redis:6379/0
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - FLASK_APP=wsgi.py
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - ./ml/models:/app/models
+      - ./ml/data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - medbot-network
+    command: python -m flask run --host=0.0.0.0
+
+  # Frontend React Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: medbot-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - REACT_APP_ENV=${FLASK_ENV:-development}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - medbot-network
+
+  # Prometheus for Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: medbot-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - medbot-network
+
+  # Grafana for Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: medbot-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME:-admin}
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - medbot-network
+
+  # Optional: Airflow for Automation
+  # Uncomment to enable workflow automation
+  # airflow:
+  #   image: apache/airflow:2.7.0-python3.11
+  #   container_name: medbot-airflow
+  #   environment:
+  #     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  #     - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql://airflow:airflow@postgres:5432/airflow
+  #     - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./automation/dags:/opt/airflow/dags
+  #     - ./automation/plugins:/opt/airflow/plugins
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - medbot-network
+  #   command: airflow webserver
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  medbot-network:
+    driver: bridge

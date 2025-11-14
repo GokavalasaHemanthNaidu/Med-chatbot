@@ -1,0 +1,418 @@
+# Complete File List for MedBot Enhanced Project
+
+This document provides a complete file manifest for the MedBot Enhanced project with descriptions.
+
+## 📋 Core Project Files (Root Level)
+
+### Configuration Files
+
+| File | Type | Purpose | Size |
+|------|------|---------|------|
+| `README.md` | Markdown | Main project documentation | ~15KB |
+| `.env.example` | Text | Environment variables template | ~3KB |
+| `.gitignore` | Text | Git ignore patterns | ~8KB |
+| `LICENSE` | Text | MIT License | ~1KB |
+| `GITHUB_SETUP_GUIDE.md` | Markdown | GitHub upload guide | ~12KB |
+| `FILE_MANIFEST.md` | Markdown | This file - complete file listing | ~10KB |
+
+### Setup & Execution Scripts
+
+| File | Type | Purpose | Platform |
+|------|------|---------|----------|
+| `setup.sh` | Bash | Automated setup script | Linux/Mac |
+| `setup-windows.bat` | Batch | Automated setup script | Windows |
+| `run.sh` | Bash | Quick run menu | Linux/Mac |
+
+### Docker Configuration
+
+| File | Type | Purpose | Size |
+|------|------|---------|------|
+| `docker-compose.yml` | YAML | Multi-container orchestration | ~8KB |
+| `Dockerfile-backend` | Docker | Backend container image | ~2KB |
+| `Dockerfile-frontend` | Docker | Frontend container image | ~2KB |
+
+### Requirements & Dependencies
+
+| File | Type | Purpose | Size |
+|------|------|---------|------|
+| `requirements.txt` | Text | Python package dependencies | ~3KB |
+| `frontend/package.json` | JSON | Node.js dependencies | ~2KB |
+
+---
+
+## 📁 Project Directory Structure
+
+### ML (Machine Learning) Directory
+
+```
+ml/
+├── training/
+│   ├── train.py                 # Model training script
+│   ├── evaluate.py              # Model evaluation
+│   └── hyperparameter_tuning.py # Hyperparameter optimization
+├── models/
+│   ├── intent_model.py          # Neural network architecture
+│   ├── preprocessor.py          # Text preprocessing
+│   ├── chatbotmodel.h5          # Trained model (generated)
+│   ├── words.pkl                # Vocabulary (generated)
+│   └── classes.pkl              # Intent classes (generated)
+├── data/
+│   ├── intents.json             # Training data with intents
+│   └── augmented_data.json      # Augmented dataset
+└── scripts/
+    ├── data_sync.py             # Database sync script
+    └── model_deploy.py          # Model deployment
+```
+
+### Backend Directory
+
+```
+backend/
+├── app/
+│   ├── __init__.py              # Flask app initialization
+│   ├── config.py                # Configuration settings
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── chat.py              # Chat endpoints
+│   │   ├── sessions.py          # Session management
+│   │   └── admin.py             # Admin endpoints
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── chat_service.py      # Core chatbot logic
+│   │   ├── intent_classifier.py # NLP classification
+│   │   ├── session_manager.py   # Redis management
+│   │   └── analytics_service.py # Analytics
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── database.py          # SQLAlchemy models
+│   │   └── schemas.py           # Pydantic schemas
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── auth.py              # Authentication
+│   │   └── validators.py        # Input validation
+│   └── middleware/
+│       ├── __init__.py
+│       ├── error_handler.py     # Error handling
+│       └── rate_limiter.py      # Rate limiting
+├── requirements.txt             # Backend dependencies
+├── wsgi.py                      # WSGI entry point
+└── Dockerfile                   # Container image
+```
+
+### Frontend Directory
+
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── ChatWindow.jsx       # Main chat interface
+│   │   ├── MessageBubble.jsx    # Message display
+│   │   ├── InputField.jsx       # User input
+│   │   ├── ThemeToggle.jsx      # Theme switcher
+│   │   ├── FeedbackButtons.jsx  # Feedback system
+│   │   ├── AdminDashboard.jsx   # Admin panel
+│   │   └── TypingIndicator.jsx  # Loading indicator
+│   ├── hooks/
+│   │   ├── useChat.js           # Chat custom hook
+│   │   └── useSession.js        # Session custom hook
+│   ├── services/
+│   │   └── api.js               # API client
+│   ├── styles/
+│   │   ├── App.css              # App styles
+│   │   └── index.css            # Global styles
+│   ├── App.jsx                  # Main component
+│   ├── index.js                 # Entry point
+│   └── index.html               # HTML template
+├── public/
+│   ├── index.html               # Public HTML
+│   └── favicon.ico              # App icon
+├── package.json                 # Dependencies
+├── package-lock.json            # Dependency lock
+├── Dockerfile                   # Container image
+└── .gitignore                   # Frontend gitignore
+```
+
+### Automation Directory
+
+```
+automation/
+├── dags/
+│   ├── __init__.py
+│   ├── data_sync_dag.py         # Data sync workflow
+│   ├── model_retrain_dag.py     # Model retrain workflow
+│   ├── analytics_dag.py         # Analytics workflow
+│   └── backup_dag.py            # Backup workflow
+├── plugins/
+│   └── custom_operators.py      # Custom operators
+└── airflow.cfg                  # Airflow configuration
+```
+
+### Database Directory
+
+```
+database/
+├── schemas/
+│   ├── init.sql                 # Initial schema
+│   └── tables.sql               # Table definitions
+├── migrations/
+│   └── versions/
+│       ├── 001_create_tables.py
+│       ├── 002_add_analytics.py
+│       └── ...
+└── seeds/
+    └── sample_data.sql          # Sample data
+```
+
+### Monitoring Directory
+
+```
+monitoring/
+├── prometheus/
+│   ├── prometheus.yml           # Prometheus config
+│   └── alert_rules.yml          # Alert rules
+├── grafana/
+│   ├── dashboards/
+│   │   ├── performance.json     # Performance dashboard
+│   │   ├── engagement.json      # Engagement dashboard
+│   │   └── model_metrics.json   # Model metrics dashboard
+│   └── provisioning/
+│       └── datasources.yml      # Data source config
+└── alertmanager/
+    └── config.yml               # Alert manager config
+```
+
+### Testing Directory
+
+```
+tests/
+├── unit/
+│   ├── test_intent_classifier.py
+│   ├── test_chat_service.py
+│   ├── test_session_manager.py
+│   └── test_api.py
+├── integration/
+│   ├── test_api_endpoints.py
+│   └── test_ml_pipeline.py
+├── e2e/
+│   └── test_user_flows.py
+└── conftest.py                  # Pytest configuration
+```
+
+### Documentation Directory
+
+```
+docs/
+├── architecture.md              # Architecture documentation
+├── api_reference.md             # API documentation
+├── deployment_guide.md          # Deployment instructions
+├── user_guide.md                # User documentation
+├── contributing.md              # Contributing guidelines
+├── troubleshooting.md           # Troubleshooting guide
+└── security.md                  # Security documentation
+```
+
+### Logs & Backups Directories (Generated)
+
+```
+logs/
+├── api.log                      # API logs
+├── model.log                    # Model logs
+└── error.log                    # Error logs
+
+backups/
+├── database/
+│   └── backup-2025-11-14.sql
+└── models/
+    └── chatbotmodel-v2.1.h5
+```
+
+---
+
+## 📄 Configuration Files Details
+
+### `.env.example`
+Contains:
+- Flask configuration
+- Database credentials
+- Redis settings
+- JWT configuration
+- API settings
+- CORS settings
+- Email configuration
+- AWS settings
+- Monitoring settings
+
+### `requirements.txt`
+Contains:
+- Flask and extensions (~5 packages)
+- ML libraries (TensorFlow, NLTK, scikit-learn)
+- Data processing (pandas, numpy, scipy)
+- Database (PostgreSQL, SQLAlchemy, Redis)
+- API tools (requests, JWT, dotenv)
+- Monitoring (prometheus-client)
+- Testing (pytest, pytest-cov)
+
+---
+
+## 🚀 Execution Files
+
+### `setup.sh` (Linux/Mac)
+- Creates virtual environment
+- Installs dependencies
+- Downloads NLTK data
+- Trains model
+- Creates directories
+
+### `setup-windows.bat` (Windows)
+- Creates virtual environment
+- Installs dependencies
+- Downloads NLTK data
+- Trains model
+- Creates directories
+
+### `run.sh` (Linux/Mac)
+- Menu to choose execution mode:
+  1. Desktop GUI
+  2. Flask API
+  3. Docker Compose
+
+---
+
+## 🐳 Docker Files
+
+### `docker-compose.yml`
+Services:
+- PostgreSQL database
+- Redis cache
+- Flask backend
+- React frontend
+- Prometheus metrics
+- Grafana dashboard
+
+### `Dockerfile-backend`
+- Python 3.11 slim base image
+- Installs system dependencies
+- Installs Python packages
+- Downloads NLTK data
+- Runs Gunicorn server
+
+### `Dockerfile-frontend`
+- Node.js 18 alpine builder stage
+- Nginx alpine production stage
+- Builds React application
+- Serves with Nginx
+
+---
+
+## 📊 File Count Summary
+
+| Category | Count | Est. Size |
+|----------|-------|-----------|
+| Python files | 40+ | ~200KB |
+| Frontend files | 20+ | ~100KB |
+| Config files | 15+ | ~50KB |
+| Documentation | 10+ | ~100KB |
+| Test files | 15+ | ~80KB |
+| Configuration | 5+ | ~30KB |
+| Total | 100+ | ~560KB |
+
+---
+
+## 🔄 File Dependencies
+
+### Startup Dependencies
+1. `requirements.txt` → Python packages
+2. `ml/models/` → Pre-trained model files
+3. `.env` → Environment configuration
+4. `ml/data/intents.json` → Training data
+
+### Build Dependencies
+1. `docker-compose.yml` → Container orchestration
+2. `Dockerfile-*` → Container images
+3. `package.json` → Frontend dependencies
+
+### Runtime Dependencies
+1. `backend/wsgi.py` → API server entry
+2. `frontend/src/index.js` → Frontend entry
+3. `ml/models/*.pkl` → Model files
+4. `database/schemas/init.sql` → Database schema
+
+---
+
+## 📝 Git Tracking
+
+### Tracked Files ✅
+- All Python source code
+- Frontend components
+- Configuration templates (.env.example)
+- Documentation
+- Scripts (setup, run)
+- Docker files
+
+### Ignored Files ❌ (in .gitignore)
+- `.env` (actual environment file)
+- `venv/` (virtual environment)
+- `node_modules/` (frontend packages)
+- `ml/models/*.h5` (trained models)
+- `*.pkl` (pickle files)
+- `logs/` (log files)
+- `__pycache__/` (Python cache)
+- `.pytest_cache/` (test cache)
+
+---
+
+## 📥 Download & Upload
+
+### Files to Upload to GitHub ✅
+- All source code files
+- Configuration templates
+- Documentation
+- Setup scripts
+- Docker files
+- License and README
+
+### Files NOT to Upload ❌
+- `.env` (use .env.example)
+- Trained models (*.h5)
+- Pickle files (*.pkl)
+- Virtual environment
+- Node modules
+- Log files
+- Large datasets
+
+---
+
+## 🎯 Quick Reference
+
+### To Add New Feature
+1. Create file in appropriate directory
+2. Add to git: `git add path/to/file`
+3. Commit: `git commit -m "Add feature"`
+4. Push: `git push origin main`
+
+### To Update Configuration
+1. Edit `.env.example` (template)
+2. Document changes in README.md
+3. Commit and push changes
+
+### To Add Dependencies
+1. Install: `pip install package_name`
+2. Update: `pip freeze > requirements.txt`
+3. Commit both changes
+
+---
+
+## 📞 Support & Issues
+
+For questions about file structure or organization:
+1. Check README.md for overview
+2. Review GITHUB_SETUP_GUIDE.md for upload help
+3. See architecture.md in docs/
+4. Check file-specific comments in code
+
+---
+
+**Last Updated**: November 14, 2025  
+**Version**: 1.0  
+**Total Files**: 100+  
+**Project Size**: ~560KB (excluding dependencies and models)

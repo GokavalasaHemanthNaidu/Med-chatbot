@@ -1,0 +1,90 @@
+@echo off
+REM MedBot Enhanced - Quick Setup Script for Windows
+
+echo.
+echo ========================================
+echo MedBot Enhanced - Setup Script
+echo ========================================
+echo.
+
+REM Check Python version
+echo Checking Python version...
+python --version >nul 2>&1
+if errorlevel 1 (
+    echo ERROR: Python not found. Please install Python 3.8 or higher.
+    pause
+    exit /b 1
+)
+
+for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+echo Python %PYTHON_VERSION% found
+
+REM Create virtual environment
+echo.
+echo Creating virtual environment...
+if not exist "venv" (
+    python -m venv venv
+    echo Virtual environment created
+) else (
+    echo Virtual environment already exists
+)
+
+REM Activate virtual environment
+echo Activating virtual environment...
+call venv\Scripts\activate.bat
+
+REM Upgrade pip
+echo Upgrading pip...
+python -m pip install --upgrade pip setuptools wheel
+
+REM Install requirements
+echo Installing Python dependencies...
+pip install -r requirements.txt
+
+REM Download NLTK data
+echo Downloading NLTK data...
+python -c "import nltk; nltk.download('punkt'); nltk.download('wordnet'); nltk.download('averaged_perceptron_tagger')"
+
+REM Copy environment file
+echo.
+echo Setting up environment variables...
+if not exist ".env" (
+    copy .env.example .env
+    echo .env file created from template
+    echo Please update .env with your configuration
+) else (
+    echo .env file already exists
+)
+
+REM Train the model
+echo.
+echo Training the chatbot model...
+if not exist "ml\models\chatbotmodel.h5" (
+    python ml\training\train.py
+    echo Model trained successfully
+) else (
+    echo Model already exists, skipping training
+)
+
+REM Create necessary directories
+echo.
+echo Creating necessary directories...
+if not exist "logs" mkdir logs
+if not exist "ml\models" mkdir ml\models
+if not exist "database\backups" mkdir database\backups
+echo Directories created
+
+echo.
+echo ========================================
+echo Setup completed successfully!
+echo ========================================
+echo.
+echo Next steps:
+echo 1. Update .env file with your configuration
+echo 2. Run desktop GUI: python gui.py
+echo 3. Run Flask API: python -m flask run
+echo 4. Or use Docker: docker-compose up -d
+echo.
+echo Documentation: See README.md for detailed instructions
+echo.
+pause

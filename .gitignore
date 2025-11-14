@@ -1,0 +1,275 @@
+# Comprehensive .gitignore for MedBot Enhanced Project
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+.env
+.env.local
+.env.*.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.sublime-project
+.sublime-workspace
+*.sublime-workspace
+*.sublime-project
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+.pytest_cache
+
+# Machine Learning Models
+ml/models/*.h5
+ml/models/*.pkl
+ml/models/*.joblib
+*.keras
+*.model
+*.weights
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+*.csv
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+.~*
+
+# Node.js (Frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm/
+.yarn/
+dist/
+build/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# OS
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# Miscellaneous
+.cache/
+.venv/
+.cache
+dist/
+build/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Data Files
+data/
+datasets/
+*.csv
+*.tsv
+*.xlsx
+
+# Backup Files
+*.backup
+*.bak
+*.tmp
+
+# OS Specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Security - Never commit these
+.ssh/
+private_key*
+secret_key*
+api_key*
+token*
+
+# Audio/Media Files (Keep small)
+*.mp3
+*.wav
+*.mp4
+*.avi
+*.flv
+
+# Compiled Files
+*.o
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# CI/CD
+.github/workflows/*.log
+.gitlab-ci.yml.bak
+
+# Generated Files
+generated/
+auto_generated/
+
+# Large Files
+*.tar.gz
+*.tar.bz2
+*.rar
+*.zip
+
+# Do NOT ignore (examples)
+# !.gitkeep
+# !.env.example
+# !requirements.txt
+# !README.md
+# !docker-compose.yml
+
+# Local Configuration Overrides
+local_config.py
+local_settings.py
+
+# IDE Specific
+.editorconfig
+.project
+.pydevproject
+.settings/
+
+# Debugging
+debug.log
+error.log
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx
+docs/_build/
+
+# Unit Test / Coverage
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Airflow
+airflow/logs/
+airflow/plugins/
+airflow/dags/__pycache__/
+
+# Celery
+celerybeat-schedule
+
+# Temporary Model Files
+*.h5.tmp
+*.pkl.tmp
+
+# Cache Directories
+.cache/
+*/.cache/
+**/__pycache__/
+
+# Experiment Outputs
+experiments/
+results/
+outputs/
+
+# Private/Sensitive Data
+secrets/
+private/
+credentials/
+sensitive_data/
