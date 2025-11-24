@@ -8,12 +8,20 @@ Original file is located at
 """
 
 import nltk
+import re
 import random
-import numpy as np
+try:
+  import numpy as np
+except Exception:
+  np = None
 import json
 import pickle
 from nltk.stem import WordNetLemmatizer
-from tensorflow.keras.models import load_model
+try:
+  from tensorflow.keras.models import load_model
+except Exception:
+  load_model = None
+import pickle
 lemmatizer=WordNetLemmatizer()
 
 with open('intents.json') as json_file:
@@ -21,10 +29,36 @@ with open('intents.json') as json_file:
 
 words=pickle.load(open('words.pkl','rb'))
 classes=pickle.load(open('classes.pkl','rb'))
-model=load_model('chatbotmodel.h5')
+model=None
+sk_model=None
+sk_le=None
+nb=None
+try:
+  if load_model:
+    model=load_model('chatbotmodel.h5')
+except Exception:
+  model=None
+if model is None:
+  try:
+    sk=pickle.load(open('chatbot_sklearn.pkl','rb'))
+    sk_model=sk['model']
+    sk_le=sk['label_encoder']
+  except Exception:
+    sk_model=None
+if model is None and sk_model is None:
+  try:
+    nb=pickle.load(open('nb_model.pkl','rb'))
+  except Exception:
+    nb=None
+
+def tokenize(text):
+  try:
+    return nltk.word_tokenize(text)
+  except Exception:
+    return re.findall(r"\w+", str(text).lower())
 
 def clean_up_sentence(sentence):
-  sentence_words=nltk.word_tokenize(sentence)
+  sentence_words=tokenize(sentence)
   sentence_words=[lemmatizer.lemmatize(word) for word in sentence_words]
   return sentence_words
 
@@ -35,19 +69,55 @@ def bag_of_words(sentence):
     for i,word in enumerate(words):
       if word == w:
         bag[i]=1
-  return np.array(bag)
+  return np.array(bag) if np is not None else bag
 
 def predict_class(sentence):
-  bow=bag_of_words(sentence)
-  res=model.predict(np.array([bow]))[0]
-  ERROR_THRESHOLD=0.25
-  results=[[i,r] for i,r in enumerate(res) if r> ERROR_THRESHOLD]
-
-  results.sort(key=lambda x:x[1],reverse=True)
-  return_list=[]
-  for r in results:
-    return_list.append({'intent': classes[r[0]],'probability':str(r[1])})
-  return return_list
+  if model is not None:
+    bow=bag_of_words(sentence)
+    res=model.predict(np.array([bow]))[0]
+    ERROR_THRESHOLD=0.25
+    results=[[i,r] for i,r in enumerate(res) if r> ERROR_THRESHOLD]
+    results.sort(key=lambda x:x[1],reverse=True)
+    return_list=[]
+    for r in results:
+      return_list.append({'intent': classes[r[0]],'probability':str(r[1])})
+    return return_list
+  if sk_model is not None and np is not None:
+    bow=bag_of_words(sentence)
+    proba=sk_model.predict_proba(np.array([bow]))[0]
+    idx=int(np.argmax(proba))
+    tag=classes[idx]
+    return [{'intent': tag,'probability':str(proba[idx])}]
+  if nb is not None:
+    tokens=clean_up_sentence(sentence)
+    bow=[0]*len(nb['vocab'])
+    for w in tokens:
+      for i,word in enumerate(nb['vocab']):
+        if word==w:
+          bow[i]+=1
+    res={}
+    for i,c in enumerate(nb['classes']):
+      logp=0.0
+      if nb['priors'].get(c):
+        logp+=float(np.log(nb['priors'][c])) if np is not None else 0.0
+      for j,count in enumerate(bow):
+        if count>0:
+          p=nb['cond'][c][j]
+          logp+=count*float(np.log(p)) if np is not None else 0.0
+      res[c]=logp
+    tag=max(res.items(),key=lambda x:x[1])[0]
+    return [{'intent': tag,'probability':'1.0'}]
+  tokens=clean_up_sentence(sentence)
+  scores={}
+  for intent in intents['intents']:
+    tag=intent['tag']
+    s=0
+    for p in intent.get('patterns',[]):
+      p_tokens=[lemmatizer.lemmatize(w) for w in tokenize(p)]
+      s+=len(set(tokens)&set(p_tokens))
+    scores[tag]=s
+  best=max(scores.items(),key=lambda x:x[1])[0]
+  return [{'intent': best,'probability':'1.0'}]
 
 def get_response(intents_list,intents_json):
   tag=intents_list[0]['intent']
@@ -58,10 +128,14 @@ def get_response(intents_list,intents_json):
       break
   return result
 
-print("GO! BOT IS RUNNING")
-
-while True:
-  message=input("")
+def respond(message):
   ints=predict_class(message)
-  res=get_response(ints,intents)
-  print(res)
+  return get_response(ints,intents)
+
+if __name__ == '__main__':
+  print("GO! BOT IS RUNNING")
+  while True:
+    message=input("")
+    ints=predict_class(message)
+    res=get_response(ints,intents)
+    print(res)

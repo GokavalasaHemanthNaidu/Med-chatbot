@@ -1,4 +1,5 @@
 from tkinter import *
+from chatbot_py import respond
 import time
 import tkinter.messagebox
 
@@ -129,7 +130,7 @@ class ChatInterface(Frame):
         self.text_box.insert(END, pr1)
         self.text_box.configure(state=DISABLED)
         self.text_box.see(END)
-        ob = chat(user_input)
+        ob = respond(user_input)
         pr = "MedBot : " + ob + "\n"
         self.text_box.configure(state=NORMAL)
         self.text_box.insert(END, pr)
@@ -278,6 +279,9 @@ root = Tk()
 a = ChatInterface(root)
 root.geometry(window_size)
 root.title("MedBot")
-root.iconbitmap('MedBot.jpg')
+try:
+    root.iconbitmap('MedBot.jpg')
+except Exception:
+    pass
 root.mainloop()
 
