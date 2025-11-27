@@ -16,13 +16,28 @@ except Exception:
   np = None
 import json
 import pickle
-from nltk.stem import WordNetLemmatizer
+try:
+  from nltk.stem import WordNetLemmatizer
+except Exception:
+  WordNetLemmatizer = None
 try:
   from tensorflow.keras.models import load_model
 except Exception:
   load_model = None
 import pickle
-lemmatizer=WordNetLemmatizer()
+if WordNetLemmatizer is not None:
+  try:
+    lemmatizer=WordNetLemmatizer()
+  except Exception:
+    class _DummyLemmatizer:
+      def lemmatize(self, w):
+        return str(w).lower()
+    lemmatizer=_DummyLemmatizer()
+else:
+  class _DummyLemmatizer:
+    def lemmatize(self, w):
+      return str(w).lower()
+  lemmatizer=_DummyLemmatizer()
 
 with open('intents.json') as json_file:
     intents = json.load(json_file)
@@ -59,7 +74,10 @@ def tokenize(text):
 
 def clean_up_sentence(sentence):
   sentence_words=tokenize(sentence)
-  sentence_words=[lemmatizer.lemmatize(word) for word in sentence_words]
+  try:
+    sentence_words=[lemmatizer.lemmatize(word) for word in sentence_words]
+  except Exception:
+    sentence_words=[str(word).lower() for word in sentence_words]
   return sentence_words
 
 def bag_of_words(sentence):
@@ -113,7 +131,10 @@ def predict_class(sentence):
     tag=intent['tag']
     s=0
     for p in intent.get('patterns',[]):
-      p_tokens=[lemmatizer.lemmatize(w) for w in tokenize(p)]
+      try:
+        p_tokens=[lemmatizer.lemmatize(w) for w in tokenize(p)]
+      except Exception:
+        p_tokens=[str(w).lower() for w in tokenize(p)]
       s+=len(set(tokens)&set(p_tokens))
     scores[tag]=s
   best=max(scores.items(),key=lambda x:x[1])[0]
